@@ -1,143 +1,215 @@
-<JS html>
-<html lang="zh-TW">
+<js html>
+<html lang="zh-TW" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>糖果噩夢屋 - 甜蜜與恐懼的交織</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        /* 自訂可怕字體與特效樣式 */
-        .horror-font {
-            font-family: 'Creepster', cursive, sans-serif;
-            letter-spacing: 2px;
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        creepster: ['Creepster', 'cursive', 'sans-serif'],
+                        sans: ['Noto Sans TC', 'sans-serif'],
+                    }
+                }
+            }
         }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
         body {
             font-family: 'Noto Sans TC', sans-serif;
-            background-color: #1a0507;
+            background-color: #0d0203;
             color: #f3f4f6;
             overflow-x: hidden;
+            user-select: none;
+            transition: background-color 0.5s ease;
         }
-        /* 畫面閃爍與血跡特效 */
-        @keyframes bloodSpatter {
-            0% { opacity: 0; transform: scale(0.8); }
-            50% { opacity: 1; transform: scale(1.1); }
-            100% { opacity: 0; transform: scale(1); }
+
+        /* 畫面強烈極端震動 */
+        @keyframes violentEarthquake {
+            0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+            10% { transform: translate(-12px, 10px) rotate(-3deg) scale(1.02); }
+            20% { transform: translate(14px, -8px) rotate(3deg) scale(0.98); }
+            30% { transform: translate(-10px, -12px) rotate(-2deg) scale(1.05); }
+            40% { transform: translate(12px, 12px) rotate(2deg) scale(0.95); }
+            50% { transform: translate(-14px, 6px) rotate(-3deg) scale(1.03); }
+            60% { transform: translate(10px, -10px) rotate(3deg) scale(0.97); }
+            70% { transform: translate(-8px, 14px) rotate(-1deg) scale(1.02); }
+            80% { transform: translate(14px, -6px) rotate(2deg) scale(0.99); }
+            90% { transform: translate(-6px, 8px) rotate(-2deg) scale(1.01); }
+            100% { transform: translate(0, 0) rotate(0deg) scale(1); }
         }
-        .blood-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: radial-gradient(circle, rgba(255,0,0,0.4) 0%, rgba(139,0,0,0.8) 70%, rgba(0,0,0,0.95) 100%);
+        .violent-shake {
+            animation: violentEarthquake 0.6s cubic-bezier(.36,.07,.19,.97) infinite;
+        }
+
+        /* 閃光燈暴衝 (Strobe) */
+        @keyframes strobeFlash {
+            0%, 100% { background-color: rgba(255, 0, 0, 0.95); filter: invert(1); }
+            20% { background-color: rgba(0, 0, 0, 0.98); filter: invert(0); }
+            40% { background-color: rgba(255, 255, 255, 0.95); filter: invert(1); }
+            60% { background-color: rgba(139, 0, 0, 0.95); filter: contrast(200%); }
+            80% { background-color: rgba(0, 0, 0, 1); filter: invert(0); }
+        }
+        .strobe-active {
+            animation: strobeFlash 0.1s infinite;
+        }
+
+        /* 恰吉跳嚇爆衝 (Jumpscare Zoom) */
+        @keyframes jumpscareZoom {
+            0% { transform: scale(0.1) translate(-50%, -50%) rotate(-15deg); opacity: 0; }
+            15% { opacity: 1; }
+            40% { transform: scale(3.5) translate(-15%, -15%) rotate(10deg); filter: drop-shadow(0 0 50px red) contrast(200%); }
+            70% { transform: scale(2.8) translate(-20%, -10%) rotate(-5deg); filter: invert(0.8) hue-rotate(90deg); }
+            100% { transform: scale(4) translate(-12%, -12%) rotate(0deg); opacity: 1; }
+        }
+        .jumpscare-zoom {
+            animation: jumpscareZoom 0.7s forwards ease-in;
+            transform-origin: center center;
+        }
+
+        /* Glitch 視覺破壞特效 */
+        .glitch-corrupt {
+            position: relative;
+        }
+        .glitch-corrupt::before, .glitch-corrupt::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            clip: rect(0, 0, 0, 0);
+        }
+        .corrupted-ui {
+            filter: grayscale(80%) sepia(100%) hue-rotate(-50deg) saturate(500%) contrast(150%);
+            transition: filter 0.3s ease;
+        }
+
+        /* 燈光故障閃爍 */
+        @keyframes ambientFail {
+            0%, 100% { opacity: 1; }
+            5% { opacity: 0.1; }
+            10% { opacity: 0.8; }
+            15% { opacity: 0.05; }
+            25% { opacity: 0.9; }
+            50% { opacity: 0.2; }
+            55% { opacity: 0.0; }
+            70% { opacity: 0.7; }
+        }
+        .lights-failing {
+            animation: ambientFail 0.3s infinite;
+        }
+
+        /* 掃描線效果 */
+        .scanlines {
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.4) 50%
+            ), linear-gradient(
+                90deg,
+                rgba(255, 0, 0, 0.03),
+                rgba(0, 255, 0, 0.01),
+                rgba(0, 0, 255, 0.03)
+            );
+            background-size: 100% 3px, 6px 100%;
             pointer-events: none;
-            z-index: 9999;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-        .blood-active {
-            animation: bloodSpatter 1.5s ease-out forwards;
-        }
-        /* 畫面強烈震動特效 */
-        @keyframes shake {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            10% { transform: translate(-3px, -2px) rotate(-1deg); }
-            20% { transform: translate(-3px, 0px) rotate(1deg); }
-            30% { transform: translate(3px, 2px) rotate(0deg); }
-            40% { transform: translate(1px, -1px) rotate(1deg); }
-            50% { transform: translate(-1px, 2px) rotate(-1deg); }
-            60% { transform: translate(-3px, 1px) gradient(0deg); }
-            70% { transform: translate(3px, 1px) rotate(-1deg); }
-            80% { transform: translate(-1px, -1px) rotate(1deg); }
-            90% { transform: translate(1px, 2px) rotate(0deg); }
-            100% { transform: translate(0, 0) rotate(0deg); }
-        }
-        .shake-screen {
-            animation: shake 0.5s ease-in-out;
-        }
-        /* 恰吉彈跳出來 */
-        @keyframes chuckyJump {
-            0% { bottom: -400px; transform: scale(0.5) rotate(-10deg); }
-            60% { bottom: 0px; transform: scale(1.1) rotate(5deg); }
-            80% { bottom: -30px; transform: scale(1) rotate(-3deg); }
-            100% { bottom: 0px; transform: scale(1) rotate(0deg); }
-        }
-        .chucky-popup {
-            position: fixed;
-            bottom: -400px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10000;
-            transition: bottom 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .chucky-active {
-            animation: chuckyJump 0.8s forwards;
-        }
-        /* 詭異燈光閃爍 */
-        @keyframes flicker {
-            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
-            20%, 24%, 55% { opacity: 0.4; }
-        }
-        .flicker-light {
-            animation: flicker 3s infinite;
         }
     </style>
 </head>
-<body class="bg-[#120305] text-pink-100 min-h-screen flex flex-col justify-between">
+<body id="bodyContainer" class="bg-[#0a0203] text-pink-100 min-h-screen flex flex-col justify-between relative">
 
-    <!-- 恐怖特效遮罩 -->
-    <div id="bloodOverlay" class="blood-overlay"></div>
+    <!-- 全螢幕掃描線濾鏡 -->
+    <div class="scanlines fixed inset-0 z-30 pointer-events-none"></div>
 
-    <!-- 恰吉彈出容器 -->
-    <div id="chuckyContainer" class="chucky-popup pointer-events-none flex flex-col items-center">
-        <div class="relative bg-red-950 border-4 border-red-600 rounded-t-3xl p-6 shadow-2xl shadow-red-900/80 max-w-md text-center pointer-events-auto">
-            <div class="absolute -top-12 left-1/2 transform -translate-x-1/2 w-24 h-24 bg-red-700 rounded-full flex items-center justify-center border-4 border-black text-4xl shadow-lg">
-                🔪
-            </div>
-            <h2 class="horror-font text-4xl text-red-500 mt-6 tracking-widest drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">"HI, I'M CHUCKY!"</h2>
-            <p class="text-pink-200 text-lg mt-2 font-bold bg-black/60 p-2 rounded border border-red-800">
-                嘿嘿嘿...這顆糖果沾滿了新鮮的草莓醬...還有血！你逃不掉的！
-            </p>
-            <button onclick="dismissChucky()" class="mt-4 bg-red-700 hover:bg-red-600 text-white font-bold px-6 py-2 rounded-full shadow-lg border-2 border-red-400 transition transform hover:scale-105">
-                快逃啊！！ 😱
-            </button>
-        </div>
-        <!-- 模擬恰吉角色圖標 -->
-        <div class="text-8xl mt-[-20px] filter drop-shadow-[0_10px_10px_rgba(255,0,0,0.5)] animate-bounce">
-            👺
+    <!-- 閃光與恐怖紅黑全螢幕遮罩 -->
+    <div id="strobeOverlay" class="fixed inset-0 z-40 pointer-events-none opacity-0 transition-opacity"></div>
+
+    <!-- 動態噴血 Canvas 畫布 -->
+    <canvas id="bloodCanvas" class="fixed inset-0 z-40 pointer-events-none w-full h-full"></canvas>
+
+    <!-- 巨型恐怖恰吉跳嚇容器 -->
+    <div id="jumpscareModal" class="fixed inset-0 z-50 pointer-events-none hidden flex items-center justify-center overflow-hidden">
+        <!-- SVG/CSS 繪製的高對比恐怖恰吉臉孔與極限恐懼眼神 -->
+        <div id="jumpscareFace" class="absolute w-[800px] h-[800px] flex items-center justify-center">
+            <svg viewBox="0 0 500 500" class="w-full h-full drop-shadow-[0_0_80px_rgba(255,0,0,1)]">
+                <!-- 詭異臉孔輪廓與刀疤 -->
+                <ellipse cx="250" cy="250" rx="200" ry="220" fill="#2d0508" stroke="#8b0000" stroke-width="12" />
+                <!-- 狂暴眼睛 (紅光發亮) -->
+                <circle cx="170" cy="190" r="45" fill="#000" stroke="#ff0000" stroke-width="8" />
+                <circle cx="330" cy="190" r="45" fill="#000" stroke="#ff0000" stroke-width="8" />
+                <circle cx="170" cy="190" r="18" fill="#ffffff" class="animate-ping" />
+                <circle cx="330" cy="190" r="18" fill="#ffffff" class="animate-ping" />
+                <circle cx="175" cy="185" r="8" fill="#ff0000" />
+                <circle cx="325" cy="185" r="8" fill="#ff0000" />
+                <!-- 刀疤與縫線 -->
+                <path d="M 120 120 Q 180 220 150 280" stroke="#ff0000" stroke-width="8" fill="none" />
+                <line x1="125" y1="150" x2="155" y2="140" stroke="#ffffff" stroke-width="4" />
+                <line x1="135" y1="190" x2="165" y2="180" stroke="#ffffff" stroke-width="4" />
+                <line x1="140" y1="230" x2="170" y2="220" stroke="#ffffff" stroke-width="4" />
+                
+                <path d="M 320 100 Q 280 200 360 260" stroke="#ff0000" stroke-width="10" fill="none" />
+                <line x1="310" y1="140" x2="340" y2="130" stroke="#ffffff" stroke-width="5" />
+                <line x1="320" y1="180" x2="350" y2="170" stroke="#ffffff" stroke-width="5" />
+
+                <!-- 詭異大嘴與血腥尖牙 -->
+                <path d="M 130 330 Q 250 450 370 330 Q 250 360 130 330 Z" fill="#110000" stroke="#ff0000" stroke-width="8" />
+                <!-- 尖銳牙齒 -->
+                <polygon points="160,335 175,370 190,338" fill="#fff" />
+                <polygon points="200,340 215,385 230,342" fill="#fff" />
+                <polygon points="270,342 285,385 300,340" fill="#fff" />
+                <polygon points="310,338 325,370 340,335" fill="#fff" />
+                <polygon points="235,343 250,395 265,343" fill="#ff0000" />
+                <!-- 嘴角流血 -->
+                <path d="M 130 330 Q 110 390 120 440" stroke="#8b0000" stroke-width="12" fill="none" stroke-linecap="round" />
+                <path d="M 370 330 Q 390 390 380 450" stroke="#8b0000" stroke-width="14" fill="none" stroke-linecap="round" />
+            </svg>
         </div>
     </div>
 
+    <!-- 恰吉語錄高對比字幕浮現 -->
+    <div id="chuckySubtitle" class="fixed bottom-12 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-all duration-200 text-center">
+        <h2 id="subtitleText" class="font-creepster text-5xl md:text-7xl text-red-600 tracking-widest drop-shadow-[0_5px_10px_rgba(0,0,0,1)] bg-black/90 px-8 py-3 rounded-2xl border-2 border-red-600 border-dashed">
+            "I'M GONNA GET YOU!"
+        </h2>
+    </div>
+
     <!-- 導覽列 -->
-    <header class="bg-[#240609] border-b border-red-950 sticky top-0 z-40 shadow-xl">
+    <header id="mainHeader" class="bg-[#1a0407] border-b border-red-950 sticky top-0 z-20 shadow-2xl transition-colors duration-500">
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <span class="text-3xl animate-pulse">🍬</span>
-                <h1 class="horror-font text-3xl md:text-4xl text-red-500 tracking-wider">糖果噩夢屋 <span class="text-pink-400 text-sm font-sans font-normal">Candy Nightmare</span></h1>
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="triggerTerrifyingJumpscare()">
+                <span class="text-3xl animate-bounce">🍬</span>
+                <h1 id="shopTitle" class="font-creepster text-3xl md:text-5xl text-red-600 tracking-wider transition-colors duration-300">
+                    糖果噩夢屋 <span class="text-pink-400 text-sm font-sans font-normal tracking-normal">Candy Nightmare</span>
+                </h1>
             </div>
             <div class="flex items-center space-x-4">
-                <button onclick="toggleCart()" class="relative bg-red-900/60 hover:bg-red-800 border border-red-600 px-4 py-2 rounded-xl flex items-center space-x-2 transition shadow-lg">
-                    <span class="text-xl">🛒</span>
-                    <span class="hidden sm:inline font-bold">詛咒購物車</span>
-                    <span id="cartCount" class="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center font-bold shadow">0</span>
+                <button onclick="toggleCart()" class="relative bg-red-950/80 hover:bg-red-800 border-2 border-red-700 px-5 py-2.5 rounded-xl flex items-center space-x-2 transition shadow-[0_0_15px_rgba(255,0,0,0.3)]">
+                    <span class="text-2xl">🛒</span>
+                    <span class="hidden sm:inline font-bold text-red-200">詛咒購物車</span>
+                    <span id="cartCount" class="absolute -top-3 -right-3 bg-red-600 text-white text-xs w-7 h-7 rounded-full flex items-center justify-center font-bold border-2 border-black shadow">0</span>
                 </button>
             </div>
         </div>
     </header>
 
     <!-- 主視覺 Banner -->
-    <section class="relative bg-gradient-to-b from-[#2a080c] to-[#120305] py-16 px-4 text-center border-b border-red-950/50 flicker-light">
+    <section id="heroSection" class="relative bg-gradient-to-b from-[#240609] via-[#120305] to-[#0a0203] py-16 px-4 text-center border-b border-red-950/80 transition-all duration-500">
         <div class="max-w-4xl mx-auto">
-            <span class="bg-red-900/80 text-red-200 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border border-red-600 shadow-inner">
-                ⚠️ 警告：內含致命甜美與恰吉詛咒
+            <span class="inline-block bg-red-950/90 text-red-400 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border border-red-700 shadow-inner mb-4 animate-pulse">
+                ⚠️ 極度危險警告：按壓加入購物車將喚醒恰吉惡靈 ⚠️
             </span>
-            <h2 class="horror-font text-5xl md:text-7xl text-red-500 mt-4 mb-4 drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)]">
-                嚐一口... 就再也醒不來
+            <h2 id="heroHeading" class="font-creepster text-5xl md:text-8xl text-red-600 mb-4 drop-shadow-[0_8px_10px_rgba(0,0,0,0.9)]">
+                咬一口... 靈魂歸我
             </h2>
-            <p class="text-pink-200/80 text-base md:text-xl max-w-2xl mx-auto mb-8 font-light">
-                手工熬製的精緻糖果，伴隨詭異的童年噩夢。每一個加入購物車的動作，都是你與恰吉簽下的靈魂契約。
+            <p id="heroSubtext" class="text-pink-200/80 text-base md:text-xl max-w-2xl mx-auto mb-8 font-light">
+                每一顆甜美精緻的糖果，都浸泡在詛咒的草莓血漿中。你敢點擊「加入購物車」嗎？
             </p>
             <div class="flex justify-center gap-4">
-                <a href="#shop" class="bg-red-700 hover:bg-red-600 text-white font-bold px-8 py-3 rounded-xl shadow-lg border border-red-500 transition transform hover:scale-105">
-                    立即挑選糖果 🩸
+                <a href="#shop" class="bg-red-800 hover:bg-red-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-[0_0_20px_rgba(255,0,0,0.5)] border-2 border-red-500 transition transform hover:scale-105 active:scale-95">
+                    進入糖果屠宰場 🩸
                 </a>
             </div>
         </div>
@@ -146,87 +218,87 @@
     <!-- 商品列表區 -->
     <main id="shop" class="max-w-7xl mx-auto px-4 py-16 flex-grow w-full">
         <div class="text-center mb-12">
-            <h3 class="horror-font text-4xl text-red-400 mb-2">恐怖精選糖果</h3>
-            <p class="text-pink-300 text-sm">點擊「加入購物車」體驗驚悚萬分的恰吉特效！</p>
+            <h3 id="productSectionTitle" class="font-creepster text-4xl md:text-6xl text-red-500 mb-2">恐怖精選糖果</h3>
+            <p class="text-pink-300 text-sm">點擊下方按鈕將觸發 Web Audio 極限驚悚音效與恰吉暴沖！</p>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             
             <!-- 商品 1 -->
-            <div class="bg-[#1f070a] border-2 border-red-950 rounded-2xl overflow-hidden shadow-2xl hover:border-red-600 transition duration-300 flex flex-col justify-between group">
-                <div class="relative h-48 bg-gradient-to-tr from-pink-950 to-red-900 flex items-center justify-center overflow-hidden">
-                    <span class="text-7xl group-hover:scale-125 transition duration-300 filter drop-shadow-md">🍬</span>
-                    <span class="absolute top-3 right-3 bg-red-600 text-white text-xs px-2.5 py-1 rounded-full font-bold shadow">熱賣詛咒</span>
+            <div class="candy-card bg-[#180507] border-2 border-red-950 rounded-2xl overflow-hidden shadow-2xl hover:border-red-600 transition duration-300 flex flex-col justify-between group">
+                <div class="candy-img-box relative h-52 bg-gradient-to-tr from-pink-950 to-red-900 flex items-center justify-center overflow-hidden">
+                    <span class="candy-emoji text-8xl group-hover:scale-125 transition duration-300 filter drop-shadow-lg">🍬</span>
+                    <span class="absolute top-3 right-3 bg-red-700 text-white text-xs px-3 py-1 rounded-full font-bold shadow">熱賣詛咒</span>
                 </div>
                 <div class="p-5 flex flex-col flex-grow justify-between">
                     <div>
-                        <h4 class="font-bold text-xl text-pink-100 mb-1">血滴子草莓硬糖</h4>
-                        <p class="text-xs text-pink-300/70 mb-4">外表甜美如初戀，咬下瞬間爆出濃稠鮮紅草莓醬，宛如恰吉的傑作。</p>
+                        <h4 class="candy-name font-bold text-xl text-pink-100 mb-2">血滴子草莓爆漿糖</h4>
+                        <p class="candy-desc text-xs text-pink-300/70 mb-4 leading-relaxed">外表甜美，咬下瞬間噴濺濃稠鮮紅草莓血漿，喚醒恰吉的殺戮渴望。</p>
                     </div>
                     <div class="flex items-center justify-between mt-4">
-                        <span class="horror-font text-2xl text-red-400">$ 150</span>
-                        <button onclick="addToCart('血滴子草莓硬糖', 150)" class="bg-red-900 hover:bg-red-700 text-pink-100 text-sm font-bold px-4 py-2 rounded-xl border border-red-600 shadow transition transform hover:scale-105 active:scale-95">
-                            加入購物車 🛒
+                        <span class="font-creepster text-3xl text-red-500">$ 150</span>
+                        <button onclick="handleAddToCart('血滴子草莓爆漿糖', 150)" class="bg-red-900 hover:bg-red-600 text-white font-bold px-4 py-2.5 rounded-xl border border-red-500 shadow-lg transition transform hover:scale-105 active:scale-90">
+                            加入購物車 🔪
                         </button>
                     </div>
                 </div>
             </div>
 
             <!-- 商品 2 -->
-            <div class="bg-[#1f070a] border-2 border-red-950 rounded-2xl overflow-hidden shadow-2xl hover:border-red-600 transition duration-300 flex flex-col justify-between group">
-                <div class="relative h-48 bg-gradient-to-tr from-purple-950 to-red-900 flex items-center justify-center overflow-hidden">
-                    <span class="text-7xl group-hover:scale-125 transition duration-300 filter drop-shadow-md">🍭</span>
-                    <span class="absolute top-3 right-3 bg-purple-600 text-white text-xs px-2.5 py-1 rounded-full font-bold shadow">靈魂旋渦</span>
+            <div class="candy-card bg-[#180507] border-2 border-red-950 rounded-2xl overflow-hidden shadow-2xl hover:border-red-600 transition duration-300 flex flex-col justify-between group">
+                <div class="candy-img-box relative h-52 bg-gradient-to-tr from-purple-950 to-red-950 flex items-center justify-center overflow-hidden">
+                    <span class="candy-emoji text-8xl group-hover:scale-125 transition duration-300 filter drop-shadow-lg">🍭</span>
+                    <span class="absolute top-3 right-3 bg-purple-700 text-white text-xs px-3 py-1 rounded-full font-bold shadow">靈魂催眠</span>
                 </div>
                 <div class="p-5 flex flex-col flex-grow justify-between">
                     <div>
-                        <h4 class="font-bold text-xl text-pink-100 mb-1">萬聖節催眠棒棒糖</h4>
-                        <p class="text-xs text-pink-300/70 mb-4">黑紫相間的螺旋，看久了會聽見恰吉在耳邊呢喃的詭異笑聲。</p>
+                        <h4 class="candy-name font-bold text-xl text-pink-100 mb-2">恰吉死靈旋渦棒棒糖</h4>
+                        <p class="candy-desc text-xs text-pink-300/70 mb-4 leading-relaxed">黑紫相間的魔幻螺旋，凝視超過三秒將在耳邊傳來恰吉淒厲的尖叫。</p>
                     </div>
                     <div class="flex items-center justify-between mt-4">
-                        <span class="horror-font text-2xl text-red-400">$ 180</span>
-                        <button onclick="addToCart('萬聖節催眠棒棒糖', 180)" class="bg-red-900 hover:bg-red-700 text-pink-100 text-sm font-bold px-4 py-2 rounded-xl border border-red-600 shadow transition transform hover:scale-105 active:scale-95">
-                            加入購物車 🛒
+                        <span class="font-creepster text-3xl text-red-500">$ 180</span>
+                        <button onclick="handleAddToCart('恰吉死靈旋渦棒棒糖', 180)" class="bg-red-900 hover:bg-red-600 text-white font-bold px-4 py-2.5 rounded-xl border border-red-500 shadow-lg transition transform hover:scale-105 active:scale-90">
+                            加入購物車 🔪
                         </button>
                     </div>
                 </div>
             </div>
 
             <!-- 商品 3 -->
-            <div class="bg-[#1f070a] border-2 border-red-950 rounded-2xl overflow-hidden shadow-2xl hover:border-red-600 transition duration-300 flex flex-col justify-between group">
-                <div class="relative h-48 bg-gradient-to-tr from-rose-950 to-red-950 flex items-center justify-center overflow-hidden">
-                    <span class="text-7xl group-hover:scale-125 transition duration-300 filter drop-shadow-md">🍫</span>
-                    <span class="absolute top-3 right-3 bg-red-700 text-white text-xs px-2.5 py-1 rounded-full font-bold shadow">劇毒巧克力</span>
+            <div class="candy-card bg-[#180507] border-2 border-red-950 rounded-2xl overflow-hidden shadow-2xl hover:border-red-600 transition duration-300 flex flex-col justify-between group">
+                <div class="candy-img-box relative h-52 bg-gradient-to-tr from-rose-950 to-black flex items-center justify-center overflow-hidden">
+                    <span class="candy-emoji text-8xl group-hover:scale-125 transition duration-300 filter drop-shadow-lg">🍫</span>
+                    <span class="absolute top-3 right-3 bg-red-800 text-white text-xs px-3 py-1 rounded-full font-bold shadow">凶器純度</span>
                 </div>
                 <div class="p-5 flex flex-col flex-grow justify-between">
                     <div>
-                        <h4 class="font-bold text-xl text-pink-100 mb-1">古董殺人魔黑巧磚</h4>
-                        <p class="text-xs text-pink-300/70 mb-4">採用黑森林可可豆與神祕苦甜香料，傳說曾被恰吉拿來當作凶器。</p>
+                        <h4 class="candy-name font-bold text-xl text-pink-100 mb-2">鬼娃娃古董黑巧磚</h4>
+                        <p class="candy-desc text-xs text-pink-300/70 mb-4 leading-relaxed">99% 極苦黑巧克力，添加不可告人的魔界香料，苦澀如死後的沈默。</p>
                     </div>
                     <div class="flex items-center justify-between mt-4">
-                        <span class="horror-font text-2xl text-red-400">$ 220</span>
-                        <button onclick="addToCart('古董殺人魔黑巧磚', 220)" class="bg-red-900 hover:bg-red-700 text-pink-100 text-sm font-bold px-4 py-2 rounded-xl border border-red-600 shadow transition transform hover:scale-105 active:scale-95">
-                            加入購物車 🛒
+                        <span class="font-creepster text-3xl text-red-500">$ 220</span>
+                        <button onclick="handleAddToCart('鬼娃娃古董黑巧磚', 220)" class="bg-red-900 hover:bg-red-600 text-white font-bold px-4 py-2.5 rounded-xl border border-red-500 shadow-lg transition transform hover:scale-105 active:scale-90">
+                            加入購物車 🔪
                         </button>
                     </div>
                 </div>
             </div>
 
             <!-- 商品 4 -->
-            <div class="bg-[#1f070a] border-2 border-red-950 rounded-2xl overflow-hidden shadow-2xl hover:border-red-600 transition duration-300 flex flex-col justify-between group">
-                <div class="relative h-48 bg-gradient-to-tr from-amber-950 to-red-900 flex items-center justify-center overflow-hidden">
-                    <span class="text-7xl group-hover:scale-125 transition duration-300 filter drop-shadow-md">🍬</span>
-                    <span class="absolute top-3 right-3 bg-amber-700 text-white text-xs px-2.5 py-1 rounded-full font-bold shadow">厄運限定</span>
+            <div class="candy-card bg-[#180507] border-2 border-red-950 rounded-2xl overflow-hidden shadow-2xl hover:border-red-600 transition duration-300 flex flex-col justify-between group">
+                <div class="candy-img-box relative h-52 bg-gradient-to-tr from-amber-950 to-red-900 flex items-center justify-center overflow-hidden">
+                    <span class="candy-emoji text-8xl group-hover:scale-125 transition duration-300 filter drop-shadow-lg">🧸</span>
+                    <span class="absolute top-3 right-3 bg-amber-800 text-white text-xs px-3 py-1 rounded-full font-bold shadow">詛咒娃娃</span>
                 </div>
                 <div class="p-5 flex flex-col flex-grow justify-between">
                     <div>
-                        <h4 class="font-bold text-xl text-pink-100 mb-1">巫毒娃娃軟糖組</h4>
-                        <p class="text-xs text-pink-300/70 mb-4">每咬一口軟糖，就像在對恰吉施展巫毒咒語，酸甜嚼勁讓人停不下來。</p>
+                        <h4 class="candy-name font-bold text-xl text-pink-100 mb-2">巫毒軟糖靈魂包</h4>
+                        <p class="candy-desc text-xs text-pink-300/70 mb-4 leading-relaxed">每隻小熊軟糖都刻有巫毒符號，咬下頭部時請做好面對噩夢的準備。</p>
                     </div>
                     <div class="flex items-center justify-between mt-4">
-                        <span class="horror-font text-2xl text-red-400">$ 250</span>
-                        <button onclick="addToCart('巫毒娃娃軟糖組', 250)" class="bg-red-900 hover:bg-red-700 text-pink-100 text-sm font-bold px-4 py-2 rounded-xl border border-red-600 shadow transition transform hover:scale-105 active:scale-95">
-                            加入購物車 🛒
+                        <span class="font-creepster text-3xl text-red-500">$ 250</span>
+                        <button onclick="handleAddToCart('巫毒軟糖靈魂包', 250)" class="bg-red-900 hover:bg-red-600 text-white font-bold px-4 py-2.5 rounded-xl border border-red-500 shadow-lg transition transform hover:scale-105 active:scale-90">
+                            加入購物車 🔪
                         </button>
                     </div>
                 </div>
@@ -235,89 +307,313 @@
         </div>
     </main>
 
-    <!-- 購物車抽屜側栏 -->
-    <div id="cartDrawer" class="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-[#180407] border-l-2 border-red-950 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col justify-between">
-        <div class="p-6 border-b border-red-950 flex justify-between items-center bg-[#220609]">
-            <h3 class="horror-font text-2xl text-red-500">🛒 詛咒購物車清單</h3>
-            <button onclick="toggleCart()" class="text-pink-300 hover:text-white text-2xl font-bold">&times;</button>
+    <!-- 購物車抽屜側欄 -->
+    <div id="cartDrawer" class="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-[#130305] border-l-2 border-red-800 shadow-[0_0_50px_rgba(0,0,0,0.9)] transform translate-x-full transition-transform duration-300 flex flex-col justify-between">
+        <div class="p-6 border-b border-red-900 flex justify-between items-center bg-[#1e0508]">
+            <h3 class="font-creepster text-3xl text-red-500">🛒 詛咒購物車清單</h3>
+            <button onclick="toggleCart()" class="text-pink-300 hover:text-white text-3xl font-bold">&times;</button>
         </div>
         <div id="cartItems" class="p-6 flex-grow overflow-y-auto space-y-4">
-            <p class="text-pink-300/50 text-center mt-12">購物車目前空空如也，快挑選一顆帶有詛咒的糖果吧...</p>
+            <p class="text-pink-300/50 text-center mt-12">購物車目前空無一物，恰吉正在伺機而動...</p>
         </div>
-        <div class="p-6 border-t border-red-950 bg-[#220609]">
+        <div class="p-6 border-t border-red-900 bg-[#1e0508]">
             <div class="flex justify-between items-center mb-4">
-                <span class="text-pink-300 font-bold">總計金額：</span>
-                <span id="cartTotal" class="horror-font text-3xl text-red-500">$ 0</span>
+                <span class="text-pink-200 font-bold">總計金額：</span>
+                <span id="cartTotal" class="font-creepster text-4xl text-red-500">$ 0</span>
             </div>
-            <button onclick="checkout()" class="w-full bg-red-700 hover:bg-red-600 text-white font-bold py-3 rounded-xl shadow-lg border border-red-500 transition">
-                前往靈魂結帳 🔪
+            <button onclick="checkout()" class="w-full bg-red-800 hover:bg-red-600 text-white font-bold py-3.5 rounded-xl shadow-lg border border-red-500 transition transform hover:scale-102">
+                獻祭靈魂結帳 🩸
             </button>
         </div>
     </div>
 
     <!-- 頁尾 -->
-    <footer class="bg-[#120305] border-t border-red-950 text-center py-6 text-pink-300/50 text-xs">
-        <p>&copy; 2026 糖果噩夢屋 Candy Nightmare Store. All Rights Reserved. 恰吉隨時在您身邊...</p>
+    <footer class="bg-[#0a0203] border-t border-red-950 text-center py-6 text-pink-300/40 text-xs">
+        <p>&copy; 2026 糖果噩夢屋 Candy Nightmare. All Rights Reserved. "A friend till the end!"</p>
     </footer>
 
-    <!-- JavaScript 互動邏輯 -->
     <script>
-        // 購物車資料陣列
-        let cart = [];
+        /* ----------------------------------------------------
+           1. Web Audio API 聲學引擎 (Procedural Horror Sound Generator)
+           不依賴任何外部 MP3 檔案，動態合成高頻 Screamer、魔鬼笑聲與金屬刺殺聲
+           ---------------------------------------------------- */
+        let audioCtx = null;
 
-        // 切換購物車顯示
-        function toggleCart() {
-            const drawer = document.getElementById('cartDrawer');
-            drawer.classList.toggle('translate-x-full');
+        function initAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
         }
 
-        // 加入購物車並觸發恐怖恰吉特效
-        function addToCart(name, price) {
-            // 加入商品至購物車
-            const existingItem = cart.find(item => item.name === name);
-            if (existingItem) {
-                existingItem.quantity += 1;
+        // 播放複合型極限 Screamer 驚悚音效
+        function playTerrifyingScreamerSound() {
+            initAudioContext();
+            if (!audioCtx) return;
+
+            const now = audioCtx.currentTime;
+
+            // --- 音效 A: 高頻尖銳刺耳 Scream (Screech Oscillator) ---
+            const screamOsc = audioCtx.createOscillator();
+            const screamGain = audioCtx.createGain();
+            screamOsc.type = 'sawtooth';
+            
+            // 頻率從 800Hz 暴衝至 3500Hz 形成恐怖刺耳尖叫
+            screamOsc.frequency.setValueAtTime(800, now);
+            screamOsc.frequency.exponentialRampToValueAtTime(3800, now + 0.15);
+            screamOsc.frequency.linearRampToValueAtTime(1200, now + 0.6);
+
+            screamGain.gain.setValueAtTime(0.01, now);
+            screamGain.gain.linearRampToValueAtTime(0.8, now + 0.05); // 強烈突發大音量
+            screamGain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+
+            screamOsc.connect(screamGain);
+            screamGain.connect(audioCtx.destination);
+            screamOsc.start(now);
+            screamOsc.stop(now + 0.8);
+
+            // --- 音效 B: 低沉失真魔鬼笑聲與重低音震波 (Demonic Bass & Laugh) ---
+            const demonOsc = audioCtx.createOscillator();
+            const demonGain = audioCtx.createGain();
+            demonOsc.type = 'square';
+
+            demonOsc.frequency.setValueAtTime(120, now);
+            demonOsc.frequency.linearRampToValueAtTime(40, now + 0.7);
+
+            // 震盪頻率模擬恐怖魔鬼笑聲顫音
+            const lfo = audioCtx.createOscillator();
+            const lfoGain = audioCtx.createGain();
+            lfo.frequency.value = 18; // 快頻顫音
+            lfoGain.gain.value = 30;
+            lfo.connect(demonOsc.frequency);
+            lfo.start(now);
+            lfo.stop(now + 0.8);
+
+            demonGain.gain.setValueAtTime(0.7, now);
+            demonGain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+
+            demonOsc.connect(demonGain);
+            demonGain.connect(audioCtx.destination);
+            demonOsc.start(now);
+            demonOsc.stop(now + 0.8);
+
+            // --- 音效 C: 金屬刀刃揮砍劃破聲 (Metallic Metal Slash Noise) ---
+            const bufferSize = audioCtx.sampleRate * 0.3;
+            const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const output = noiseBuffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                output[i] = Math.random() * 2 - 1;
+            }
+
+            const whiteNoise = audioCtx.createBufferSource();
+            whiteNoise.buffer = noiseBuffer;
+
+            // 高通濾波器呈現銳利揮刀聲
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'highpass';
+            filter.frequency.value = 3000;
+
+            const noiseGain = audioCtx.createGain();
+            noiseGain.gain.setValueAtTime(0.9, now);
+            noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+
+            whiteNoise.connect(filter);
+            filter.connect(noiseGain);
+            noiseGain.connect(audioCtx.destination);
+
+            whiteNoise.start(now);
+            whiteNoise.stop(now + 0.3);
+        }
+
+        /* ----------------------------------------------------
+           2. 動態噴血 Canvas 畫布邏輯 (Blood Splatter & Handprints)
+           ---------------------------------------------------- */
+        const canvas = document.getElementById('bloodCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function createBloodSpatterEffect() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 隨機繪製多組噴濺血滴與血斑
+            const splatterCount = 35;
+            for (let i = 0; i < splatterCount; i++) {
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height;
+                const radius = Math.random() * 60 + 10;
+
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(${130 + Math.random() * 80}, 0, 0, ${0.7 + Math.random() * 0.3})`;
+                ctx.fill();
+
+                // 噴濺細微血絲
+                for (let j = 0; j < 8; j++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const dist = radius + Math.random() * 80;
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.lineTo(x + Math.cos(angle) * dist, y + Math.sin(angle) * dist);
+                    ctx.strokeStyle = 'rgba(120, 0, 0, 0.8)';
+                    ctx.lineWidth = Math.random() * 4 + 1;
+                    ctx.stroke();
+                }
+            }
+
+            // 繪製恐怖血手印
+            drawBloodyHandprint(canvas.width * 0.2, canvas.height * 0.3);
+            drawBloodyHandprint(canvas.width * 0.75, canvas.height * 0.6);
+
+            // 讓血跡慢慢流淌（逐漸消失）
+            let opacity = 1;
+            const fadeInterval = setInterval(() => {
+                opacity -= 0.03;
+                canvas.style.opacity = opacity;
+                if (opacity <= 0) {
+                    clearInterval(fadeInterval);
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    canvas.style.opacity = 1;
+                }
+            }, 60);
+        }
+
+        // 繪製血手印 SVG/Path
+        function drawBloodyHandprint(cx, cy) {
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.fillStyle = 'rgba(140, 0, 0, 0.85)';
+            
+            // 手掌心
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 30, 40, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 五隻手指
+            const fingers = [
+                { x: -25, y: -45, r: 8, h: 35 },
+                { x: -10, y: -55, r: 9, h: 45 },
+                { x: 8, y: -55, r: 9, h: 42 },
+                { x: 25, y: -45, r: 8, h: 35 },
+                { x: -38, y: -10, r: 7, h: 25 }
+            ];
+
+            fingers.forEach(f => {
+                ctx.beginPath();
+                ctx.ellipse(f.x, f.y, f.r, f.h / 2, 0, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            ctx.restore();
+        }
+
+        /* ----------------------------------------------------
+           3. 恰吉台詞字幕與極限 Jumpscare 觸發器
+           ---------------------------------------------------- */
+        const chuckyQuotes = [
+            '"HI, I\'M CHUCKY! WANNA PLAY?"',
+            '"I\'M GONNA GET YOU!"',
+            '"A FRIEND TILL THE END!"',
+            '"YOU CAN\'T HIDE FROM ME!"',
+            '"THIS CANDY IS MADE OF BLOOD!"'
+        ];
+
+        let isCorruptedState = false;
+
+        function triggerTerrifyingJumpscare() {
+            const body = document.getElementById('bodyContainer');
+            const strobe = document.getElementById('strobeOverlay');
+            const jumpscareModal = document.getElementById('jumpscareModal');
+            const jumpscareFace = document.getElementById('jumpscareFace');
+            const subtitle = document.getElementById('chuckySubtitle');
+            const subtitleText = document.getElementById('subtitleText');
+
+            // 1. 播放高分貝 Web Audio 驚悚聲
+            playTerrifyingScreamerSound();
+
+            // 2. 觸發動態血跡
+            createBloodSpatterEffect();
+
+            // 3. 全螢幕畫面劇烈地震晃動
+            body.classList.add('violent-shake', 'lights-failing');
+
+            // 4. 閃光燈頻閃 (Strobe)
+            strobe.classList.add('strobe-active');
+            strobe.style.opacity = '1';
+
+            // 5. 恰吉劇烈爆沖 (Jumpscare Zoom)
+            jumpscareModal.classList.remove('hidden');
+            jumpscareFace.classList.add('jumpscare-zoom');
+
+            // 6. 隨機顯示恰吉語錄
+            const randomQuote = chuckyQuotes[Math.floor(Math.random() * chuckyQuotes.length)];
+            subtitleText.innerText = randomQuote;
+            subtitle.style.opacity = '1';
+
+            // 7. 將頁面永久/暫時轉換為腐敗詛咒狀態 (Ui Corruption)
+            corruptStoreUI();
+
+            // 8. 於 0.85 秒後收回跳嚇，留下餘波
+            setTimeout(() => {
+                body.classList.remove('violent-shake', 'lights-failing');
+                strobe.classList.remove('strobe-active');
+                strobe.style.opacity = '0';
+                jumpscareModal.classList.add('hidden');
+                jumpscareFace.classList.remove('jumpscare-zoom');
+            }, 850);
+
+            // 字幕於 2.5 秒後消失
+            setTimeout(() => {
+                subtitle.style.opacity = '0';
+            }, 2500);
+        }
+
+        // 頁面腐化變色與文字扭曲
+        function corruptStoreUI() {
+            if (!isCorruptedState) {
+                isCorruptedState = true;
+                document.getElementById('shopTitle').innerHTML = '恰吉屠宰場 <span class="text-red-600 text-sm font-sans">Chucky\'s Slaughterhouse</span>';
+                document.getElementById('heroHeading').innerText = "你逃不掉了...";
+                document.getElementById('heroHeading').classList.add('text-red-700');
+                
+                // 將所有商品卡片添加腐敗樣式
+                document.querySelectorAll('.candy-card').forEach(card => {
+                    card.classList.add('corrupted-ui');
+                });
+            }
+        }
+
+        /* ----------------------------------------------------
+           4. 購物車邏輯 (Cart Logic)
+           ---------------------------------------------------- */
+        let cart = [];
+
+        function handleAddToCart(name, price) {
+            // 加入商品
+            const item = cart.find(i => i.name === name);
+            if (item) {
+                item.quantity += 1;
             } else {
                 cart.push({ name, price, quantity: 1 });
             }
             updateCartUI();
 
-            // 觸發恐怖特效
-            triggerChuckyEffect();
+            // 觸發恐怖 Jumpscare
+            triggerTerrifyingJumpscare();
         }
 
-        // 觸發恰吉跳出與血跡閃爍特效
-        function triggerChuckyEffect() {
-            const body = document.body;
-            const bloodOverlay = document.getElementById('bloodOverlay');
-            const chuckyContainer = document.getElementById('chuckyContainer');
-
-            // 1. 畫面震動
-            body.classList.add('shake-screen');
-            setTimeout(() => {
-                body.classList.remove('shake-screen');
-            }, 500);
-
-            // 2. 血跡特效與紅色閃爍
-            bloodOverlay.classList.add('blood-active');
-            setTimeout(() => {
-                bloodOverlay.classList.remove('blood-active');
-            }, 1500);
-
-            // 3. 恰吉彈出
-            chuckyContainer.classList.add('chucky-active');
-
-            // 4. 播放模擬詭異笑聲（以 Web Audio API 合成詭異恐怖音效，免外部連結掛掉）
-            playCreepySound();
+        function toggleCart() {
+            const drawer = document.getElementById('cartDrawer');
+            drawer.classList.toggle('translate-x-full');
         }
 
-        // 關閉恰吉視窗
-        function dismissChucky() {
-            const chuckyContainer = document.getElementById('chuckyContainer');
-            chuckyContainer.classList.remove('chucky-active');
-        }
-
-        // 更新購物車 UI 與數量
         function updateCartUI() {
             const cartItemsEl = document.getElementById('cartItems');
             const cartCountEl = document.getElementById('cartCount');
@@ -327,7 +623,7 @@
             let totalPrice = 0;
 
             if (cart.length === 0) {
-                cartItemsEl.innerHTML = `<p class="text-pink-300/50 text-center mt-12">購物車目前空空如也，快挑選一顆帶有詛咒的糖果吧...</p>`;
+                cartItemsEl.innerHTML = `<p class="text-pink-300/50 text-center mt-12">購物車目前空無一物，恰吉正在伺機而動...</p>`;
             } else {
                 cartItemsEl.innerHTML = '';
                 cart.forEach((item, index) => {
@@ -335,14 +631,14 @@
                     totalPrice += item.price * item.quantity;
 
                     cartItemsEl.innerHTML += `
-                        <div class="flex justify-between items-center bg-[#25080c] p-3 rounded-xl border border-red-950">
+                        <div class="flex justify-between items-center bg-[#1e070a] p-3.5 rounded-xl border border-red-900">
                             <div>
                                 <h5 class="font-bold text-pink-100 text-sm">${item.name}</h5>
-                                <p class="text-xs text-red-400">$ ${item.price} x ${item.quantity}</p>
+                                <p class="text-xs text-red-500 font-bold">$ ${item.price} x ${item.quantity}</p>
                             </div>
                             <div class="flex items-center space-x-2">
-                                <button onclick="changeQuantity(${index}, 1)" class="bg-red-900/60 hover:bg-red-800 px-2 py-0.5 rounded text-xs font-bold text-white">+</button>
-                                <button onclick="changeQuantity(${index}, -1)" class="bg-red-900/60 hover:bg-red-800 px-2 py-0.5 rounded text-xs font-bold text-white">-</button>
+                                <button onclick="changeQuantity(${index}, 1)" class="bg-red-900 hover:bg-red-700 px-2.5 py-1 rounded text-xs font-bold text-white">+</button>
+                                <button onclick="changeQuantity(${index}, -1)" class="bg-red-900 hover:bg-red-700 px-2.5 py-1 rounded text-xs font-bold text-white">-</button>
                             </div>
                         </div>
                     `;
@@ -353,7 +649,6 @@
             cartTotalEl.innerText = `$ ${totalPrice}`;
         }
 
-        // 調整購物車內數量
         function changeQuantity(index, delta) {
             cart[index].quantity += delta;
             if (cart[index].quantity <= 0) {
@@ -362,63 +657,31 @@
             updateCartUI();
         }
 
-        // 結帳功能
         function checkout() {
             if (cart.length === 0) {
-                // 以自製訊息框代替 alert()
-                alertUser("購物車是空的，恰吉說你得先買點血腥糖果才能離開！");
+                showCustomModal("購物車空空如也，恰吉不准你空手離開！");
                 return;
             }
-            alertUser("訂單已成立！恰吉正親自為您打包包裹，請在今晚回頭看看窗外... 🔪🩸");
+            showCustomModal("獻祭成功！恰吉已收下你的靈魂，今晚包裹將帶著詛咒親自抵達... 🔪🩸");
             cart = [];
             updateCartUI();
             toggleCart();
         }
 
-        // 自製友善美觀訊息提示函式 (符合不可使用 alert() 的規範)
-        function alertUser(message) {
+        function showCustomModal(msg) {
             const modal = document.createElement('div');
-            modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm';
+            modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4';
             modal.innerHTML = `
-                <div class="bg-[#1f070a] border-4 border-red-600 p-6 rounded-2xl max-w-sm text-center shadow-2xl">
-                    <div class="text-4xl mb-3">🔪🍬</div>
-                    <h4 class="horror-font text-2xl text-red-500 mb-2">糖果噩夢屋通知</h4>
-                    <p class="text-pink-100 text-sm mb-6">${message}</p>
-                    <button onclick="this.closest('.fixed').remove()" class="bg-red-700 hover:bg-red-600 text-white font-bold px-6 py-2 rounded-xl border border-red-400 shadow">
-                        我知道了
+                <div class="bg-[#1a0407] border-4 border-red-600 p-6 rounded-2xl max-w-sm text-center shadow-[0_0_50px_rgba(255,0,0,0.8)]">
+                    <div class="text-5xl mb-3 animate-bounce">🩸🔪</div>
+                    <h4 class="font-creepster text-3xl text-red-600 mb-2">糖果噩夢屋</h4>
+                    <p class="text-pink-100 text-sm mb-6 leading-relaxed">${msg}</p>
+                    <button onclick="this.closest('.fixed').remove()" class="bg-red-800 hover:bg-red-600 text-white font-bold px-6 py-2.5 rounded-xl border border-red-500 transition">
+                        接受命運
                     </button>
                 </div>
             `;
             document.body.appendChild(modal);
-        }
-
-        // 使用 Web Audio API 產生驚悚詭異的音效
-        function playCreepySound() {
-            try {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                if (!AudioContext) return;
-                const ctx = new AudioContext();
-
-                // 播放兩段詭異的高低音頻模擬恐怖笑聲頻率
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(150, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.3);
-                osc.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.6);
-
-                gain.gain.setValueAtTime(0.3, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
-
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-
-                osc.start();
-                osc.stop(ctx.currentTime + 0.8);
-            } catch (e) {
-                console.log("AudioContext not allowed without user interaction or blocked.");
-            }
         }
     </script>
 </body>
